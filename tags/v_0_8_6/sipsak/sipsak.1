@@ -1,0 +1,329 @@
+.\" Process this file with
+.\" groff -man -Tascii sipsak.1
+.\"
+.TH SIPSAK 1 "JULY 2002" Linux "User Manuals"
+.SH NAME
+sipsak \- a utility for various tests on sip server
+.SH SYNOPSIS
+.B sipsak [-dFGhiInMRTUVvwz] [-a
+.I password
+.B ] [-b
+.I number 
+.B ] [-c 
+.I number 
+.B ] [-e 
+.I number 
+.B ] [-f 
+.I filename 
+.B ] [-g
+.I string
+.B ] [-H
+.I hostname
+.B ] [-l 
+.I port
+.B ] [-m 
+.I number
+.B ] [-o 
+.I number
+.B ] [-r 
+.I port
+.B ] [-t 
+.I number 
+.B ] [-x 
+.I number
+.B ] -s 
+.I sip-uri
+.SH DESCRIPTION
+.B sipsak
+is a SIP stress and diagnostics utility. 
+It sends SIP requests to the server within the 
+.BR sip-uri 
+and examines received responses.
+It runs in one of the following modes:
+.IP "- default mode"
+A SIP message is sent to destination in 
+.BR sip-uri
+and reply status is displayed. 
+The request is either taken from
+.BR filename
+or generated as a new OPTIONS message.  
+.IP "- traceroute mode (-T)"
+This mode is useful for learning request's path. It
+operates similarly to IP-layer utility
+.BR traceroute (8).
+.IP "- randtrash mode (-R)"
+Parser torture mode. 
+.B sipsak 
+keeps sending randomly corrupted messages to torture a SIP server's
+parser.
+.IP "- usrloc mode (-U)"
+stress mode for SIP registrar. 
+.B sipsak
+keeps registering to a SIP server at high pace. Additionaly the registrar
+can be stressed with the 
+.BR -I
+or the
+.BR -M
+option.
+.IP "- flood mode (-F)"
+stress mode for SIP servers.
+.B sipsak 
+keeps sending requests to a SIP server at high pace.
+
+
+.SH OPTIONS
+.IP "-a password"
+With the given 
+.I password
+an authentication will be tryed on received '401 Unauthorized'. Authorization
+will be tryed on time. If this option is omitted an authorization with the
+username as password will be tryed.
+.IP "-b number"
+The starting number which is appended to the user name in the usrloc mode.
+This 
+.I number
+is increased until it reaches the value given by the
+.BR -e
+parameter. If omitted the starting number will be one.
+.IP "-c number"
+This is the maximum CSeq number in the flood mode. If omitted the maximum
+will be 2^31 (2147483647).
+.IP -d
+If this option is set all redirects will be ignored. By default without this 
+option received redirects will be respected. This option is automaticly 
+activated in the randtrash mode and in the flood mode.
+.IP "-e number"
+The ending number which is appended to the user name in the usrloc mode.
+This number is increased until it reaches this ending
+.I number.
+.IP "-f filename"
+The content of 
+.I filename
+will be read in in binary mode and will be used as replacement for the
+alternatively created sip header. This can used in the default mode to make
+other requests than OPTIONS requests (e.g. INVITE). But be warned that
+the manipulation functions (e.g. inserting Via header) are only tested
+with RFC conform requests. Additionaly special strings within the file
+can be replaced with some local or given values (see 
+.BR -g
+and
+.BR -G
+for details).
+.IP -F
+This options activates the flood mode. In this mode OPTIONS requests with
+increasing CSeq numbers are sent to the server. Replies are ignored --
+source port 9 (discard) of localhost is advertised in topmost Via.
+.IP -h
+Prints out a simple usage help message.
+.IP "-g string"
+Activates the replacement of $replace$ within the request (usualy read 
+in from a file) with the
+.I string.
+.IP -G
+Activates the automatic replacement of the following variables in the
+request (usualy read in from a file):
+.B $dsthost$ 
+will be replaced by with the host or domainname which is given
+by the
+.B -s
+parameter.
+.B $srchost$
+will be replaced by the hostname of the local machine.
+.B $port$
+will be replaced by the local listening port of 
+.B sipsak.
+.B $user$
+will be replaced by the username which is given by the
+.B -s
+parameter.
+.IP "-H hostname"
+Overwrites the automatic detection of the hostname with the given parameter.
+.B Warning: 
+use this with caution (preferable only if the automatic detection fails).
+.IP -i
+Deactivates the insertion of the Via line of the localhost. 
+.B Warning: 
+this probably disables the receiving of the responses from the server.
+.IP -I
+Activates the Invites cycles within the usrloc mode. It should be combined
+with
+.BR -U.
+In this combination 
+.B sipsak 
+first registeres a user, and then simulates an 
+invitation to this user. First an Invite is sent, this is replied with 200 OK
+and finaly an ACK is sent. This option can also be used without
+.BR -U
+, but you should be shure to NOT invite real UAs with this option. In the case
+of a missing 
+.BR -U
+the
+.BR "-l port"
+is required because only if you made a 
+.BR -U 
+run with a fixed local port before, a run with
+.BR -I
+and the same fixed local port can be successful.
+.B Warning: sipsak 
+is no real UA and invitations to real UAs can result in unexpected 
+behaivior.
+.IP "-l port"
+The receiving UDP socket will use the local network 
+.I port.
+Useful if a file is given by 
+.BR -f
+which contains a correct Via line.
+.IP "-m number"
+This sets the value of the Max-Forward header field. If omitted no Max-Forward
+field will be inserted. If omitted in the traceroute mode 
+.BR number
+will be 255.
+.IP -M
+This activates the Messages cycles within the usrloc mode (known from 
+.B sipsak
+versions pre 0.8.0 within the normal usrloc test). This option should be
+combined with
+.BR -U
+so that a succesful registration will be tested with a test message to the user
+and replied with 200 OK. But this option can also be used without the
+.BR -U
+option.
+.B Warning:
+using without 
+.BR -U
+can cause unexpected behaivor.
+.IP -n
+Instead of the full qualified domain name in the Via line the IP of the
+local host will be used.
+.IP "-o number"
+.B sipsak 
+will sleep for 
+.BR number 
+ms before it starts the next cycle in the usrloc mode. This will slow down
+the whole test process to be more realistic. Each cycle will be still completed
+as fast as possible, but the whole test will be slowed down.
+.IP "-r port"
+Instead of the default sip port 5060 the 
+.BR port
+will be used. Alternatively the remote port can be given within the sip uri of
+the 
+.BR -s
+parameter.
+.IP -R
+This activates the randtrash mode. In this mode OPTIONS requests will be send
+to server with increasing numbers of randomly crashed characters within this
+request. The position within the request and the replacing character are 
+randomly chosen. Any other response than Bad request (4xx) will stop this
+mode. Also three unresponded sends will stop this mode. With the 
+.BR -t
+parameter the maximum of trashed characters can be given.
+.IP "-s sip:uri"
+This mandatory option sets the destination of the request. It depends on the
+mode if only the server name or also an user name is mandatory. Example for a
+full 
+.BR sip:uri
+: 
+.I sip:test@foo.bar:123
+.IP "-t number"
+This parameter specifies the maximum of trashed characters in the randtrash 
+mode. If omitted 
+.BR number
+will be set to the length of the request.
+.IP -T
+This activates the traceroute mode. This mode works like the well known
+.BR traceroute(8) 
+command expect that not the number of network hops are counted rather
+the number of server on the way to the destination user. Also the round trip
+time of each request is printed out, but due to a limitation within the
+sip protocol the identity (IP or name) can only determined and printed
+out if the response from the server contains a warning header field. In this
+mode on each outgoing request the value of the Max-Forwards header field is
+increased, starting with one. The maximum of the Max-Forwards header will 255
+if no other value is given by the 
+.BR -m
+parameter. Any other response than 483 or 1xx are treated as a final response
+and will terminate this mode.
+.IP -U
+This activates the usrloc mode. Without the 
+.BR -I
+or the
+.BR -M
+option, this only registers users at a registrar. With one of the above
+options the previous registered user will also be probed ether with a
+simulated call flow (invite, 200, ack) or with an instant message 
+(message, 200). One password for all users accounts within the usrloc test 
+can be given with the 
+.BR -a
+option. An user name is mandatory for this mode in the 
+.BR -s
+parameter. The number starting from the 
+.BR -b
+parameter to the 
+.BR -e
+parameter is appended the user name. If the 
+.BR -b
+and the
+.BR -e
+parameter are omitted, only one runs with the given username, but without 
+append number to the usernames is done.
+.IP -v
+This parameter increases the output verbosity. No
+.BR -v
+means nearly no output except in traceroute and error messages. The maximum
+of three v's prints out the content of all packets received and sent.
+.IP -V
+Prints out only the name and version number of 
+.B sipsak.
+.IP -w
+Activates the extraction of the IP or hostname from the Warning header field.
+.IP "-x number"
+Sets the value of the Expires header to the given number.
+.IP -z
+Activates the randomly removing of old bindings in the usrloc mode. How many 
+per cent of the bindings will be removed, is determined by the 
+USRLOC_REMOVE_PERCENT define within the code (set it before compilation).
+Multiple removing of bindings is possible, and cannot be prevented.
+.SH RETURN VALUES
+The return value 0 means that a 200 was received. 1 means something else 
+then 1xx or 2xx was received.
+2 will be returned on local errors like non resolvable names, socket errors or
+wrong options combination. 3 will be returned on remote errors like icmp error
+messages, redirects without a contact header or simply no answer (timeout).
+
+.SH CAUTION
+Use
+.B sipsak
+responsibly. Running it in any of the stress modes puts
+substantial burden on network and server under test.
+
+.SH EXAMPLES
+.IP "sipsak -vv -s sip:nobody@foo.bar" 
+displays received replies.
+.IP "sipsak -T -s sip:nobody@foo.bar" 
+traces SIP path.
+
+.SH LIMITATIONS / NOT IMPLEMENTED
+Many servers may decide NOT to include SIP "Warning" header fields.
+Unfortunately, this makes displaying IP addresses of SIP servers
+in traceroute mode impossible.
+
+.B sipsak
+is case sensitive (not RFC conform). So all the header fields are only found
+if they are written like in the RFC.
+
+IPv6 is not supported.
+
+DNS/SRV is not supported.
+
+Currently, sipsak runs fine on Linux. It should also run under CygWin (see
+the homepage for details). Also BSD was reported to the author as operating
+system.
+.SH BUGS
+sipsak is only tested against the SIP Express Router (ser) though their could
+be various bugs. Please feel free to mail them to the author.
+
+
+.SH AUTHOR
+Nils Ohlmeier <ohlmeier at fokus dot frauenhofer dot de>
+.SH "SEE ALSO"
+.BR traceroute (8)

@@ -1,0 +1,13 @@
+* version 0.8.6
+  - fixed wrong number of retries and timeouts from configure
+  - fixed missing username in default mode
+* version 0.8.5
+  - seperated code into several files
+  - introduced autoconf & automake
+  - added option -o for sleeping between requests
+  - added option -H to overwrite automatic hostname detection
+  - ignores provisional responses in usrloc mode
+  - added support for proxy authorization (407)
+  - fixed missing port from uri in requests
+  - number of retrys is configure option
+  - maximum timeout value is configure option
