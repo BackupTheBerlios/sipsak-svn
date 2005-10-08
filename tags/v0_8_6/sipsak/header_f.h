@@ -1,5 +1,5 @@
 /*
- * $Id: helper.h,v 1.1 2003/04/04 02:12:18 calrissian Exp $
+ * $Id$
  *
  * Copyright (C) 2002-2003 Fhg Fokus
  *
@@ -16,19 +16,21 @@
  * GNU General Public License for more details.
  */
 
-#ifndef SIPSAK_HELPER_H
-#define SIPSAK_HELPER_H
+#ifndef SIPSAK_HEADER_H
+#define SIPSAK_HEADER_H
 
-#include <sys/time.h>
+void add_via(char *mes);
 
-long getaddress(char *host);
+void cpy_vias(char *reply, char *dest);
 
-void get_fqdn();
+void cpy_to(char *reply, char *dest);
 
-void replace_string(char *mes, char *search, char *replacement);
+void set_maxforw(char *mes);
 
-void trash_random(char *message);
+void uri_replace(char *mes, char *uri);
 
-double deltaT(struct timeval *t1p, struct timeval *t2p);
+void warning_extract(char *message);
+
+int cseq(char *message);
 
 #endif

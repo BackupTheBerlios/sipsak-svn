@@ -1,5 +1,5 @@
 /*
- * $Id: request.h,v 1.1 2003/04/04 02:12:18 calrissian Exp $
+ * $Id$
  *
  * Copyright (C) 2002-2003 Fhg Fokus
  *
@@ -16,9 +16,19 @@
  * GNU General Public License for more details.
  */
 
-#ifndef SIPSAK_REQUEST_H
-#define SIPSAK_REQUEST_H
+#ifndef SIPSAK_HELPER_H
+#define SIPSAK_HELPER_H
 
-void create_msg(char *buff, int action);
+#include <sys/time.h>
+
+long getaddress(char *host);
+
+void get_fqdn();
+
+void replace_string(char *mes, char *search, char *replacement);
+
+void trash_random(char *message);
+
+double deltaT(struct timeval *t1p, struct timeval *t2p);
 
 #endif

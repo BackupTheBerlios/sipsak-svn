@@ -1,5 +1,5 @@
 /*
- * $Id: shoot.h,v 1.1 2003/04/04 02:12:18 calrissian Exp $
+ * $Id$
  *
  * Copyright (C) 2002-2003 Fhg Fokus
  *
@@ -16,9 +16,9 @@
  * GNU General Public License for more details.
  */
 
-#ifndef SIPSAK_SHOOT_H
-#define SIPSAK_SHOOT_H
+#ifndef SIPSAK_REQUEST_H
+#define SIPSAK_REQUEST_H
 
-void shoot(char *buff);
+void create_msg(char *buff, int action);
 
 #endif

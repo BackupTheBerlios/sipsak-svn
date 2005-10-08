@@ -1,5 +1,5 @@
 /*
- * $Id: header_f.h,v 1.1 2003/04/04 02:12:18 calrissian Exp $
+ * $Id$
  *
  * Copyright (C) 2002-2003 Fhg Fokus
  *
@@ -16,21 +16,9 @@
  * GNU General Public License for more details.
  */
 
-#ifndef SIPSAK_HEADER_H
-#define SIPSAK_HEADER_H
+#ifndef SIPSAK_SHOOT_H
+#define SIPSAK_SHOOT_H
 
-void add_via(char *mes);
-
-void cpy_vias(char *reply, char *dest);
-
-void cpy_to(char *reply, char *dest);
-
-void set_maxforw(char *mes);
-
-void uri_replace(char *mes, char *uri);
-
-void warning_extract(char *message);
-
-int cseq(char *message);
+void shoot(char *buff);
 
 #endif
